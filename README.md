@@ -1,6 +1,4 @@
-# Opowiadamy - Novel Platform
-
-A full-stack web platform for creating, reading, and managing novels. Built with React frontend and Node.js API backend.
+A full-stack web platform for creating, reading, and managing novels. 
 
 **⚠️ Development Status**
 
