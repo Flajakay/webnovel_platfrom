@@ -2,7 +2,7 @@ A full-stack web platform for creating, reading, and managing novels.
 
 **⚠️ Development Status**
 
-This project is currently in active development and is **not production ready**. Use at your own risk. Features may change, APIs may be updated, and security improvements are ongoing.
+This project is currently in active development and is **not production ready**. 
 
 ## Development Roadmap
 
