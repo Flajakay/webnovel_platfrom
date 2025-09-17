@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Opowiadamy - Discover Endless Stories</title>
+    <script>
+      // Immediately apply dark theme by default to prevent flash of wrong theme
+      (function() {
+        // Always apply dark theme immediately, regardless of saved settings or browser preferences
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.backgroundColor = '#111827';
+        document.documentElement.style.color = '#ffffff';
+        
+        // Also ensure body has dark background
+        document.addEventListener('DOMContentLoaded', function() {
+          document.body.style.backgroundColor = '#111827';
+          document.body.style.color = '#ffffff';
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+# Server Configuration
+NODE_ENV=development                # Required, must be one of: development, production
+PORT=5000                          # Required, defaults to 5000
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/novel-platform    # Required
+
+# JWT Configuration
+JWT_SECRET=86b5b4a88def44d7d325d35bb125ba4a7ea32a9c38da7924c57a47ac55f9e60544b297fa7aa66388a3523950c5b2c44a96f60f459bf8bf7b7d88960aad7302d7    # Required, minimum 32 characters
+JWT_ACCESS_EXPIRATION=24h          # Required, defaults to 24h
+JWT_REFRESH_EXPIRATION=30d         # Required, defaults to 30d
+
+# CORS Configuration
+FRONTEND_URL=http://localhost:3000  # Required
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5000  # Optional, comma-separated list
+
+# API Configuration
+API_URL=http://localhost:5000      # Optional
+
+# SMTP Configuration (Optional)
+SMTP_HOST=smtp.example.com         # Optional
+SMTP_PORT=587                      # Optional, number
+SMTP_USER=your-smtp-user          # Optional
+SMTP_PASS=your-smtp-password      # Optional
+
+# Elasticsearch Configuration
+ELASTICSEARCH_NODE=http://200.234.224.159:9200/  # Required, defaults to http://localhost:9200
+ELASTICSEARCH_USERNAME=                   # Optional, default is empty
+ELASTICSEARCH_PASSWORD=                   # Optional, default is empty

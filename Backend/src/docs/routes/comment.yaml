@@ -1,0 +1,342 @@
+openapi: 3.0.0
+tags:
+  - name: Comments
+    description: Comment management endpoints for creating, reading, updating and deleting comments on novels
+
+components:
+  schemas:
+    Comment:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 5f8d4abd4c6c1d1234567890
+        content:
+          type: string
+          example: This chapter was amazing! I loved the plot twist.
+          maxLength: 1000
+        author:
+          type: object
+          properties:
+            _id:
+              type: string
+              example: 5f7d3abd4c6c1d1234567891
+            username:
+              type: string
+              example: reader123
+          nullable: true
+        novelId:
+          type: string
+          example: 5f7d3abd4c6c1d1234567895
+        parentId:
+          type: string
+          example: 5f7d3abd4c6c1d1234567898
+          nullable: true
+        isDeleted:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+
+    CommentResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/Comment'
+
+    CommentsListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Comment'
+            pagination:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                limit:
+                  type: integer
+                  example: 20
+                total:
+                  type: integer
+                  example: 150
+                pages:
+                  type: integer
+                  example: 8
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [fail, error]
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              param:
+                type: string
+              msg:
+                type: string
+              value:
+                type: string
+
+    DeleteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            deleted:
+              type: boolean
+              example: true
+            permanent:
+              type: boolean
+              example: false
+
+paths:
+  /comments:
+    post:
+      tags: [Comments]
+      summary: Create a new comment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+                - novelId
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                  example: I really enjoyed this novel! The worldbuilding is fantastic.
+                novelId:
+                  type: string
+                  example: 5f7d3abd4c6c1d1234567890
+                parentId:
+                  type: string
+                  example: 5f7d3abd4c6c1d1234567891
+                  description: ID of the parent comment (for replies). Omit for top-level comments.
+      responses:
+        '201':
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '404':
+          description: Novel or parent comment not found
+
+  /comments/novel/{novelId}:
+    get:
+      tags: [Comments]
+      summary: Get comments for a novel
+      parameters:
+        - in: path
+          name: novelId
+          required: true
+          schema:
+            type: string
+          description: ID of the novel
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of items per page
+        - in: query
+          name: parentId
+          schema:
+            type: string
+            nullable: true
+          description: Filter comments by parent ID. Null for top-level comments.
+      responses:
+        '200':
+          description: List of comments for the novel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentsListResponse'
+        '400':
+          description: Invalid parameters
+        '404':
+          description: Novel not found
+
+  /comments/{commentId}:
+    get:
+      tags: [Comments]
+      summary: Get a comment by ID with its replies
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: string
+          description: ID of the comment
+      responses:
+        '200':
+          description: Comment details including replies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '404':
+          description: Comment not found
+
+    put:
+      tags: [Comments]
+      summary: Update a comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: string
+          description: ID of the comment to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                  example: I want to edit my previous comment to add more thoughts about the novel.
+      responses:
+        '200':
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '400':
+          description: Validation error
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized (not the comment owner)
+        '404':
+          description: Comment not found
+
+    delete:
+      tags: [Comments]
+      summary: Delete a comment
+      description: |
+        Deletes a comment. If the comment has replies, it will be soft-deleted (marked as deleted but still visible in the hierarchy).
+        If it has no replies, it will be completely removed from the database.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: string
+          description: ID of the comment to delete
+      responses:
+        '200':
+          description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized (not the comment owner)
+        '404':
+          description: Comment not found
+
+  /comments/{commentId}/replies:
+    get:
+      tags: [Comments]
+      summary: Get replies for a comment
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: string
+          description: ID of the parent comment
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of items per page
+      responses:
+        '200':
+          description: List of replies for the comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentsListResponse'
+        '400':
+          description: Invalid parameters
+        '404':
+          description: Parent comment not found
