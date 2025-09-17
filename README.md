@@ -4,6 +4,14 @@ A full-stack web platform for creating, reading, and managing novels.
 
 This project is currently in active development and is **not production ready**. Use at your own risk. Features may change, APIs may be updated, and security improvements are ongoing.
 
+## Development Roadmap
+
+- [ ] Notification system
+- [ ] User profile customization
+- [ ] Improved analytics
+- [ ] Admin panel
+- [ ] Proper multilanguage system and English support (currently the whole platform mostly in Polish)
+
 **🚀 Features**
 
 * **Novel Management**: Create, read, update, and delete novels with metadata such as title, description, genres, tags, and cover images
@@ -208,10 +216,4 @@ The API server will be available at `http://localhost:5000`.
 4. Enter the required parameters
 5. Click "Execute"
 
-## Development Roadmap
 
-- [ ] Notification system
-- [ ] User profile customization
-- [ ] Improved analytics
-- [ ] Admin panel
-- [ ] Proper multilanguage system and English support (currently the whole platform mostly in Polish)
