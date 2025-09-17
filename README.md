@@ -186,7 +186,7 @@ The API server will be available at `http://localhost:5000`.
 
 1. **Navigate to the frontend directory:**
    ```bash
-   cd frontend/opowiadamy
+   cd frontend
    ```
 
 2. **Install dependencies:**
@@ -200,15 +200,6 @@ The API server will be available at `http://localhost:5000`.
    ```
 
    The application will be available at: `http://localhost:5000`
-
-## Port Configuration
-
-You can change the application port by adding the `PORT` environment variable to the `.env` file:
-
-```
-PORT=3001
-VITE_API_URL=https://api.opowiadamy.online/api/
-```
 
 ## API Documentation
 
